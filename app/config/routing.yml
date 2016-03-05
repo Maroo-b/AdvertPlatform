@@ -1,7 +1,4 @@
 mb_platform:
     resource: "@MBPlatformBundle/Resources/config/routing.yml"
-    prefix:   /
+    prefix:   /platform
 
-app:
-    resource: "@AppBundle/Controller/"
-    type:     annotation
