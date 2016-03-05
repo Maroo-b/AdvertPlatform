@@ -1,0 +1,3 @@
+mb_platform_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: MBPlatformBundle:Default:index }
