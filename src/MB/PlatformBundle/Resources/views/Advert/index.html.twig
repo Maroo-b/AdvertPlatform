@@ -1,0 +1,23 @@
+{% extends "MBPlatformBundle::layout.html.twig" %}
+
+{% block title %}
+ Acceuil - {{parent()}}
+{% endblock %}
+
+{% block mbplatform_body %}
+
+  <h2>Liste des annonces </h2>
+  <ul>
+    {% for advert in listAdverts %}
+     <li>
+       <a href="{{path('mb_platform_view', {'id': advert.id})}}">
+         {{advert.title}}
+       </a>
+       par {{advert.author}}
+       le {{advert.date|date('d/m/Y')}}
+     </li>
+    {% else %} 
+     <li> Pas d'annonces.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

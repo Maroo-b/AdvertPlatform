@@ -1,13 +1,13 @@
-mb_platform_page:
+mb_platform_home:
     path: /{page}
     defaults:
-        _controller: MBPLatformBundle:Advert:index
+        _controller: MBPlatformBundle:Advert:index
         page: 1
     requirements:
         page: \d*
 
 mb_platform_view:
-    path: /view/{id}
+    path: /advert/{id}
     defaults: {_controller: MBPlatformBundle:Advert:view}
     requirements:
         id: \d+
