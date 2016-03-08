@@ -2,3 +2,7 @@ services:
 #    mb_platform.example:
 #        class: MB\PlatformBundle\Example
 #        arguments: [@service_id, "plain_value", %parameter%]
+      
+     mb_platform.antispam:
+         class: MB\PlatformBundle\Antispam\MBAntispam
+         arguments: [50]
