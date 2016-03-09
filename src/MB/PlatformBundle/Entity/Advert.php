@@ -71,6 +71,12 @@ class Advert
      */
     private $applications;
 
+
+    /**
+     * @ORM\OneToMany(targetEntity="MB\PlatformBundle\Entity\AdvertSkill", mappedBy="advert")
+     */
+    private $advertSkills;
+
     /**
      * @ORM\Column( name="updated_at", type="datetime", nullable=true)
      */
