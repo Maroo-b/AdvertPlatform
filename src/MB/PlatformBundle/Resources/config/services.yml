@@ -6,3 +6,9 @@ services:
      mb_platform.antispam:
          class: MB\PlatformBundle\Antispam\MBAntispam
          arguments: [50]
+
+     mb_platform.doctrine.notification:
+         class: MB\PlatformBundle\DoctrineListener\ApplicationNotification
+         arguments: [@mailer]
+         tags: 
+             - { name: doctrine.event_listener, event: postPersist }

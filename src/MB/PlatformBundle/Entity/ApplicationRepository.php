@@ -3,6 +3,7 @@
 namespace MB\PlatformBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * ApplicationRepository
@@ -12,4 +13,13 @@ use Doctrine\ORM\EntityRepository;
  */
 class ApplicationRepository extends EntityRepository
 {
+  public function getApplicationsWithAdvert($limit)
+  {
+    $qb = $this->createQueryBuilder('a');
+    $qb->join('a.advert', 'adv')
+       ->setMaxResults($limit);
+
+    return $qb->getQuery()
+              ->getResult();
+  }
 }

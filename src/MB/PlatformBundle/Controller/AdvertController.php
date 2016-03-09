@@ -19,26 +19,33 @@ class AdvertController extends Controller
       throw new NotFoundHttpException('Page"'. $page. '" inexistant.');
     }
 
-    $listAdverts = array(
-          array(
-            'title'   => 'Recherche développpeur Symfony2',
-            'id'      => 1,
-            'author'  => 'Alexandre',
-            'content' => 'Nous recherchons un développeur Symfony2 débutant sur Lyon. Blabla…',
-            'date'    => new \Datetime()),
-          array(
-            'title'   => 'Mission de webmaster',
-            'id'      => 2,
-            'author'  => 'Hugo',
-            'content' => 'Nous recherchons un webmaster capable de maintenir notre site internet. Blabla…',
-            'date'    => new \Datetime()),
-          array(
-            'title'   => 'Offre de stage webdesigner',
-            'id'      => 3,
-            'author'  => 'Mathieu',
-            'content' => 'Nous proposons un poste pour webdesigner. Blabla…',
-            'date'    => new \Datetime())
-        );
+    $em = $this->getDoctrine()->getManager();
+    $listAdverts = $em->getRepository('MBPlatformBundle:Advert')->myFindAll();
+
+    $advert = $em->getRepository('MBPlatformBundle:Advert')->find(8);
+
+    $advert->setContent("edited advert");
+    $em->flush();
+    // $listAdverts = array(
+    //       array(
+    //         'title'   => 'Recherche développpeur Symfony2',
+    //         'id'      => 1,
+    //         'author'  => 'Alexandre',
+    //         'content' => 'Nous recherchons un développeur Symfony2 débutant sur Lyon. Blabla…',
+    //         'date'    => new \Datetime()),
+    //       array(
+    //         'title'   => 'Mission de webmaster',
+    //         'id'      => 2,
+    //         'author'  => 'Hugo',
+    //         'content' => 'Nous recherchons un webmaster capable de maintenir notre site internet. Blabla…',
+    //         'date'    => new \Datetime()),
+    //       array(
+    //         'title'   => 'Offre de stage webdesigner',
+    //         'id'      => 3,
+    //         'author'  => 'Mathieu',
+    //         'content' => 'Nous proposons un poste pour webdesigner. Blabla…',
+    //         'date'    => new \Datetime())
+    //     );
     return $this->render('MBPlatformBundle:Advert:index.html.twig',
     array( 'listAdverts' => $listAdverts ));
   }
@@ -48,7 +55,7 @@ class AdvertController extends Controller
 
     $em = $this->getDoctrine()->getManager();
     $advert = $em->getRepository('MBPlatformBundle:Advert')->find($id);
-
+    $check_me = $em->getRepository('MBPlatformBundle:Application')->getApplicationsWithAdvert(3);
     if (null === $advert){
       throw new NotFoundHttpException("L'annonce d'id ".$id." n'exsite pas.");
     }
@@ -62,14 +69,16 @@ class AdvertController extends Controller
     return $this->render('MBPlatformBundle:Advert:view.html.twig',
       array( 'advert' => $advert,
             'listApplications' => $listApplications,
-            'listAdvertSkills' => $listAdvertSkills ));
+            'listAdvertSkills' => $listAdvertSkills,
+            'check_me' => $check_me
+            ));
   }
 
   public function addAction(Request $request)
   {
 
     $advert = new Advert();
-    $advert->setTitle('Recherche Dev PHP');
+    $advert->setTitle('Recherche Dev');
     $advert->setAuthor('MB corp');
     $advert->setContent('This is sample content');
 
@@ -78,16 +87,6 @@ class AdvertController extends Controller
 
     $em = $this->getDoctrine()->getManager();
 
-    $listSkills = $em->getRepository('MBPlatformBundle:Skill')->findAll();
-
-    foreach($listSkills as $skill){
-      $advertSkill = new AdvertSkill();
-      $advertSkill->setLevel("Expert");
-      $advertSkill->setAdvert($advert);
-      $advertSkill->setSkill($skill);
-
-      $em->persist($advertSkill);
-    }
     $em->persist($advert);
     $em->flush();
     if ($request->isMethod('POST')){
