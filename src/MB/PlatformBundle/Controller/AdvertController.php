@@ -6,6 +6,8 @@ use MB\PlatformBundle\Entity\AdvertSkill;
 use MB\PlatformBundle\Entity\Advert;
 use MB\PlatformBundle\Entity\Image;
 use MB\PlatformBundle\Entity\Application;
+use MB\PlatformBundle\Form\AdvertType;
+use MB\PlatformBundle\Form\AdvertEditType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -56,36 +58,45 @@ class AdvertController extends Controller
 
   public function addAction(Request $request)
   {
+    $advert = new Advert();
 
-    if ($request->isMethod('POST')){
+    $form = $this->createForm(new AdvertType(), $advert);
+  
+    if($form->handleRequest($request)->isValid()){
+      $em = $this->getDoctrine()->getManager();
+      $em->persist($advert);
+      $em->flush();
       $request->getSession()->getFlashBag()->add('notice', 'Annonce bien enregistré');
       return $this->redirectToRoute('mb_platform_view', 
       array( 'id' => $advert->getId() ));
     }
 
-    return $this->render('MBPlatformBundle:Advert:add.html.twig');
+    return $this->render('MBPlatformBundle:Advert:add.html.twig', array(
+      'form' => $form->createView()
+    ));
   }
 
   public function editAction($id, Request $request)
   {
-    if($request->isMethod('POST')){
+    $em = $this->getDoctrine()->getManager();
+    $advert = $em->getRepository('MBPlatformBundle:Advert')->find($id);
+    if ($advert === null){
+      throw new NotFoundHttpException("L'annonce d'id ".$id." n'exsite pas.");
+    }
+    $form = $this->createform(new AdvertEditType(), $advert );
+    if($form->handleRequest($request)->isValid()){
       $request->getSession()->getFlashBag()->add('notice','annonce bien modifié');
       return $this->redirectToRoute('mb_platform_view',
       array( 'id' => $id ));
     }
 
-    $em = $this->getDoctrine()->getManager();
-    $advert = $em->getRepository('MBPlatformBundle:Advert')->find($id);
-
-    if ($advert === null){
-      throw new NotFoundHttpException("L'annonce d'id ".$id." n'exsite pas.");
-    }
     
     return $this->render('MBPlatformBundle:Advert:edit.html.twig',
-    array( 'advert' => $advert ));
+      array( 'advert' => $advert,
+        'form' => $form->createView() ));
   }
 
-  public function deleteAction($id)
+  public function deleteAction($id, Request $request)
   {
     $em = $this->getDoctrine()->getManager();
     $advert = $em->getRepository('MBPlatformBundle:Advert')->find($id);
@@ -94,8 +105,20 @@ class AdvertController extends Controller
       throw new NotFoundHttpException("L'annonce d'id ".$id." n'exsite pas.");
     }
 
+    $form = $this->createFormBuilder()->getForm();
+    if($form->handleRequest($request)->isValid()){
+      $em->remove($advert);
+      $em->flush();
 
-    return $this->render('MBPlatformBundle:Advert:delete.html.twig');
+      $request->getSession()->getFlashBag()->add('info',"L'annonce a bien été supprmiée.");
+      return $this->redirectToRoute("mb_platform_home");
+    }
+
+
+    return $this->render('MBPlatformBundle:Advert:delete.html.twig',array(
+      'advert' => $advert,
+      'form' => $form->createView()
+    ));
   }
 
   public function menuAction($limit=3)

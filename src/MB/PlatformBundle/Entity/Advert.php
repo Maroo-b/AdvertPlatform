@@ -3,6 +3,7 @@
 namespace MB\PlatformBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
@@ -57,7 +58,7 @@ class Advert
     private $published = true;
 
     /**
-     * @ORM\OneToOne(targetEntity="MB\PlatformBundle\Entity\Image", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="MB\PlatformBundle\Entity\Image", cascade={"persist", "remove"})
      */
     private $image;
 
@@ -96,6 +97,8 @@ class Advert
     public function __construct()
     {
       $this->date = new \Datetime();
+      $this->categories   = new ArrayCollection();
+      $this->applications = new ArrayCollection();
     }
 
     /**

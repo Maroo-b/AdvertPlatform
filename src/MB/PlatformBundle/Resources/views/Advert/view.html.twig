@@ -6,9 +6,8 @@
   {% endblock %}
 
 {% block mbplatform_body %}
-{{dump(check_me)}}
 {% if advert.image is not null %}
- <img src="{{advert.image.url}}" alt="{{advert.image.alt}}">
+ <img src="{{asset( advert.image.webPath )}}" alt="{{advert.image.alt}}">
 {% endif %}
  <h2>{{advert.title}}</h2>
  <i> Par {{advert.author}}, le {{advert.date|date('d/m/Y')}}</i>
@@ -34,13 +33,6 @@
     {% endfor %}
   </p>
  {% endif %}
-
- <h4> Candidatures </h4>
- <ul>
-  {% for candidature in listApplications %}
-    <li>{{candidature.content}} - by {{ candidature.author }} </li>
-  {% endfor %}
- </ul>
 
  <p>
   <a href="{{path('mb_platform_home')}}" class="btn btn-default" >
