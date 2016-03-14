@@ -10,7 +10,7 @@ parameters:
 
 framework:
     #esi:             ~
-    #translator:      { fallbacks: ["%locale%"] }
+    translator:      { fallbacks: ["%locale%"] }
     secret:          "%secret%"
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
@@ -82,4 +82,8 @@ swiftmailer:
 stof_doctrine_extensions:
     orm:
         default:
-             sluggable: true
+          sluggable: true
+fos_user:
+    db_driver:     orm
+    firewall_name: main
+    user_class:    MB\UserBundle\Entity\User
