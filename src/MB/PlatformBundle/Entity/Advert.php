@@ -5,6 +5,11 @@ namespace MB\PlatformBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
+use MB\PlatformBundle\Validator\Antiflood;
 
 /**
  * Advert
@@ -12,6 +17,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="MB\PlatformBundle\Entity\AdvertRepository")
  * @ORM\HasLifecycleCallbacks()
+ * @UniqueEntity(fields="title", message="Une anonce existe déja avec ce titre")
  */
 class Advert
 {
@@ -28,6 +34,7 @@ class Advert
      * @var \DateTime
      *
      * @ORM\Column(name="date", type="datetime")
+     * @Assert\DateTime()
      */
     private $date;
 
@@ -35,6 +42,7 @@ class Advert
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255)
+     * @Assert\Length(min=10)
      */
     private $title;
 
@@ -42,6 +50,7 @@ class Advert
      * @var string
      *
      * @ORM\Column(name="author", type="string", length=255)
+     * @Assert\Length(min=2)
      */
     private $author;
 
@@ -49,6 +58,8 @@ class Advert
      * @var string
      *
      * @ORM\Column(name="content", type="text")
+     * @Assert\NotBlank()
+     * @Antiflood()
      */
     private $content;
 
@@ -59,6 +70,7 @@ class Advert
 
     /**
      * @ORM\OneToOne(targetEntity="MB\PlatformBundle\Entity\Image", cascade={"persist", "remove"})
+     * @Assert\Valid()
      */
     private $image;
 
@@ -401,5 +413,28 @@ class Advert
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    /**
+     * @Assert\True()
+     */
+    public function isTitle()
+    {
+      return false;
+    }
+
+    /**
+     * @Assert\Callback
+     */
+    public function isContentValid(ExecutionContextInterface $context)
+    {
+      $forbiddenWords = array('echec', 'abondon');
+
+      if(preg_match('#'.implode('|', $forbiddenWords).'#', $this->getContent())){
+        $context
+          ->buildViolation('Contenu invalide, contient un mot interdit.')
+          ->atPath('content')
+          ->addViolation();
+      }
     }
 }

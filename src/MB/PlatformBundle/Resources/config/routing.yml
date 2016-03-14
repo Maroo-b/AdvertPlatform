@@ -27,3 +27,6 @@ mb_platform_delete:
     defaults: {_controller: MBPlatformBundle:Advert:delete}
     requirements:
         id: \d+
+mb_platform_test:
+    path: /testing
+    defaults: {_controller: MBPlatformBundle:Advert:test}

@@ -2,3 +2,12 @@ mb_platform:
     resource: "@MBPlatformBundle/Resources/config/routing.yml"
     prefix:   /platform
 
+login:
+    pattern: /login
+    defaults: {_controller: MBUserBundle:Security:login}
+
+login_check:
+    pattern: /login_check
+
+logout:
+    pattern: /logout

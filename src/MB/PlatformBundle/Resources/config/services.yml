@@ -12,3 +12,9 @@ services:
          arguments: [@mailer]
          tags: 
              - { name: doctrine.event_listener, event: postPersist }
+
+     mb_platform.validator.antiflood:
+         class: MB\PlatformBundle\Validator\AntifloodValidator
+         arguments: [@request_stack, @doctrine.orm.entity_manager]
+         tags:
+             - {name: validator.constraint_validator, alias: mb_platform_antiflood}

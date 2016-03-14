@@ -10,8 +10,10 @@ use MB\PlatformBundle\Form\AdvertType;
 use MB\PlatformBundle\Form\AdvertEditType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 class AdvertController extends Controller
 {
@@ -55,9 +57,16 @@ class AdvertController extends Controller
             'listAdvertSkills' => $listAdvertSkills
             ));
   }
-
+  /**
+   * @Security("has_role('ROLE_AUTEUR')")
+   */
   public function addAction(Request $request)
   {
+
+    // if(!$this->get('security.context')->isGranted('ROLE_AUTEUR')){
+    //   throw new AccessDeniedException('Acces limité aux auteurs');
+    // }
+
     $advert = new Advert();
 
     $form = $this->createForm(new AdvertType(), $advert);
@@ -133,5 +142,21 @@ class AdvertController extends Controller
       );
     return $this->render('MBPlatformBundle:Advert:menu.html.twig',
     array('listAdverts' => $listAdverts));
+  }
+
+  public function testAction()
+  {
+    $advert = new Advert();
+
+    $advert->setDate(new \Datetime());
+    $advert->setTitle('abc');
+    $advert->setAuthor('a');
+    $validator = $this->get('validator');
+    $listErrors = $validator->validate($advert);
+    if(count($listErrors) > 0){
+      return new Response(print_r($listErrors, true));
+    } else {
+      return new Response('Valid annonce');
+    }
   }
 }
