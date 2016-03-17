@@ -6,6 +6,10 @@ services:
      mb_platform.antispam:
          class: MB\PlatformBundle\Antispam\MBAntispam
          arguments: [50]
+         tags:
+            - { name: twig.extension }
+         calls:
+            - [ setMsg, ["This is spam !"] ]
 
      mb_platform.doctrine.notification:
          class: MB\PlatformBundle\DoctrineListener\ApplicationNotification
@@ -18,3 +22,6 @@ services:
          arguments: [@request_stack, @doctrine.orm.entity_manager]
          tags:
              - {name: validator.constraint_validator, alias: mb_platform_antiflood}
+
+     mb_platform.beta.html:
+         class: MB\PlatformBundle\Beta\BetHTML
